@@ -23,7 +23,7 @@
         android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:id="@+id/seekBar"
-        android:max="2"
+        android:max="99"
         android:layout_above="@+id/setDifficulty"
         android:layout_centerHorizontal="true" />
 

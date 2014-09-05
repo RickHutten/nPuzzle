@@ -4,17 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
-import android.view.ViewGroup.LayoutParams;
 import android.view.Display;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.*;
 
-import org.w3c.dom.Text;
-
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends Activity {
 
     Button button_start;
     SeekBar seekBar;
@@ -24,13 +20,52 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Button to start the game and add an OnClickListener
         button_start = (Button)findViewById(R.id.button_start);
-        button_start.setOnClickListener(this);
+        button_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                buttonStartClick();
+            }
+        });
 
         // Seekbar width 2/3 of screen width
         seekBar = (SeekBar)findViewById(R.id.seekBar);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)seekBar.getLayoutParams();
-        seekBar.setProgress(1);
+        seekBar.setProgress(49);
+
+        // Textview of difficulty
+        TextView = (TextView)(findViewById(R.id.setDifficulty));
+        setDifficultyText(49);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (0 <= progress && progress < 25) {
+                    setDifficultyText(0);
+                } else if (25 <= progress && progress < 75) {
+                    setDifficultyText(49);
+                } else if (75 <= progress && progress < 100) {
+                    setDifficultyText(99);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                int progress = seekBar.getProgress();
+                if (0 <= progress && progress < 25) {
+                    seekBar.setProgress(0);
+                } else if (25 <= progress && progress < 75) {
+                    seekBar.setProgress(49);
+                } else if (75 <= progress && progress < 100) {
+                    seekBar.setProgress(99);
+                }
+            }
+        });
 
         Display display = getWindowManager().getDefaultDisplay();
         DisplayMetrics outMetrics = new DisplayMetrics ();
@@ -39,21 +74,25 @@ public class MainActivity extends Activity implements View.OnClickListener {
         params.width = (int)(outMetrics.widthPixels / 1.5);
         seekBar.setLayoutParams(params);
 
-        // Textview of difficulty
-        TextView = (TextView)(findViewById(R.id.setDifficulty));
-        switch (Integer.parseInt(String.valueOf(seekBar.getProgress())))
+    }
+
+    private void buttonStartClick() {
+        startActivity(new Intent("android.intent.action.GAME"));
+    }
+
+    private void setDifficultyText(int progress) {
+        switch (progress)
         {
             case 0:
-                TextView.setText("Easy");
+                TextView.setText(R.string.Easy);
                 break;
-            case 1:
-                TextView.setText("Medium");
+            case 49:
+                TextView.setText(R.string.Medium);
                 break;
-            case 2:
-                TextView.setText("Hard");
+            case 99:
+                TextView.setText(R.string.Hard);
                 break;
         }
-
     }
 
     @Override
@@ -69,34 +108,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void buttonStartClick() {
-        startActivity(new Intent("android.intent.action.GAME"));
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId())
-        {
-            case R.id.button_start:
-                /*buttonStartClick();
-                break;*/
-                switch (Integer.parseInt(String.valueOf(seekBar.getProgress()))) {
-                    case 0:
-                        TextView.setText("Easy");
-                        break;
-                    case 1:
-                        TextView.setText("Medium");
-                        break;
-                    case 2:
-                        TextView.setText("Hard");
-                        break;
-                }
-        }
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
     }
 }
