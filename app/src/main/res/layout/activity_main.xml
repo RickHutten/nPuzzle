@@ -8,7 +8,59 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:id="@+id/RelativeLayout"
-    tools:context="rickhutten.npuzzle.MainActivity">
+    tools:context=".MainActivity" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/selectImg"
+        android:id="@+id/selectImg"
+        android:textSize="20sp"
+        android:paddingBottom="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:src="@drawable/square_flower_small"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:id="@+id/imgFlower"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/selectImg"
+        android:layout_alignParentLeft="true"
+        android:clickable="false" />
+
+    <ImageView
+        android:src="@drawable/square_ice_small"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:id="@+id/imgIce"
+        android:layout_marginRight="20dp"
+        android:layout_below="@+id/selectImg"
+        android:layout_alignParentRight="true"
+        android:clickable="false" />
+
+    <ImageView
+        android:src="@drawable/square_cupcake_small"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:id="@+id/imgCupcake"
+        android:layout_below="@+id/imgFlower"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentLeft="true"
+        android:clickable="false" />
+
+    <ImageView
+        android:src="@drawable/square_manhattan_small"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:id="@+id/imgManhattan"
+        android:layout_marginRight="20dp"
+        android:layout_below="@+id/imgIce"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentRight="true"
+        android:clickable="false" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -20,7 +72,7 @@
         android:layout_centerHorizontal="true" />
 
     <SeekBar
-        android:layout_width="40dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:id="@+id/seekBar"
         android:max="99"
@@ -30,6 +82,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/Easy"
         android:textSize="20sp"
         android:layout_above="@+id/button_start"
         android:id="@+id/setDifficulty"

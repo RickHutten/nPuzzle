@@ -4,6 +4,7 @@
     <string name="app_name">nPuzzle</string>
     <string name="hello_world">Hello world!</string>
     <string name="button_start">Start</string>
+    <string name="selectImg">Select image</string>
     <string name="difficulty">Difficulty:</string>
     <string name="game">Game Activity</string>
     <string name="action_settings">Settings</string>

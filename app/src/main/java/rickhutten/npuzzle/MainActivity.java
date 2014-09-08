@@ -8,13 +8,18 @@ import android.view.Display;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.SeekBar;
+
 
 public class MainActivity extends Activity {
 
     Button button_start;
     SeekBar seekBar;
     TextView TextView;
+    Intent intent = new Intent("android.intent.action.GAME");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +47,11 @@ public class MainActivity extends Activity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (0 <= progress && progress < 25) {
+                if (0 <= progress && progress < 24) {
                     setDifficultyText(0);
-                } else if (25 <= progress && progress < 75) {
+                } else if (24 <= progress && progress < 74) {
                     setDifficultyText(49);
-                } else if (75 <= progress && progress < 100) {
+                } else if (74 <= progress && progress <= 99) {
                     setDifficultyText(99);
                 }
             }
@@ -73,11 +78,12 @@ public class MainActivity extends Activity {
 
         params.width = (int)(outMetrics.widthPixels / 1.5);
         seekBar.setLayoutParams(params);
-
     }
 
+    // Go to game activity
     private void buttonStartClick() {
-        startActivity(new Intent("android.intent.action.GAME"));
+        intent.putExtra("Difficulty", seekBar.getProgress());
+        startActivity(intent);
     }
 
     private void setDifficultyText(int progress) {
