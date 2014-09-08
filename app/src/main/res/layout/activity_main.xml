@@ -28,7 +28,8 @@
         android:layout_marginLeft="20dp"
         android:layout_below="@+id/selectImg"
         android:layout_alignParentLeft="true"
-        android:clickable="false" />
+        android:clickable="false"
+        android:contentDescription="@null" />
 
     <ImageView
         android:src="@drawable/square_ice_small"
@@ -38,7 +39,8 @@
         android:layout_marginRight="20dp"
         android:layout_below="@+id/selectImg"
         android:layout_alignParentRight="true"
-        android:clickable="false" />
+        android:clickable="false"
+        android:contentDescription="@null" />
 
     <ImageView
         android:src="@drawable/square_cupcake_small"
@@ -49,7 +51,8 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
         android:layout_alignParentLeft="true"
-        android:clickable="false" />
+        android:clickable="false"
+        android:contentDescription="@null" />
 
     <ImageView
         android:src="@drawable/square_manhattan_small"
@@ -60,7 +63,8 @@
         android:layout_below="@+id/imgIce"
         android:layout_marginTop="20dp"
         android:layout_alignParentRight="true"
-        android:clickable="false" />
+        android:clickable="false"
+        android:contentDescription="@null" />
 
     <TextView
         android:layout_width="wrap_content"
