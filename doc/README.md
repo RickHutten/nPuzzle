@@ -1,3 +1,26 @@
+nPuzzle
+=======
+
+In dit project wordt een android app gemaakt over het spel [15 puzzle]. 
+
+Functies
+---------
+- Het is mogelijk om het niveau aan te passen in drie verschillende moeilijkheids graden
+    - Easy: Een grid van 3x3. In feitte een 8 puzzle.
+    - Normal: Een grid van 4x4, de standaard 15 puzzle.
+    - Hard: Een grid van 5x5, een 24 puzzle.
+- Het is mogelijk om een afbeelding te selecteren om mee te spelen.
+- Het is mogelijk om ipv een afbeelding genummerde vakjes te gebruiken.
+- Het is mogelijk om een eigen afbeelding te gebruiken.
+
+Code
+----
+Het programma wordt geschreven in xml en java. Xml wordt gebruikt voor statische elementen en de layout en java wordt gebruikt voor de dynamische content. 
+
+
+
+
+
 Dillinger
 =========
 
@@ -66,6 +89,7 @@ MIT
 
 **Free Software, Hell Yeah!**
 
+[15 puzzle]:http://en.wikipedia.org/wiki/15_puzzle
 [john gruber]:http://daringfireball.net/
 [@thomasfuchs]:http://twitter.com/thomasfuchs
 [1]:http://daringfireball.net/projects/markdown/
