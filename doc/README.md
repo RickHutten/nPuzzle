@@ -5,99 +5,40 @@ In dit project wordt een android app gemaakt over het spel [15 puzzle].
 
 Functies
 ---------
-- Het is mogelijk om het niveau aan te passen in drie verschillende moeilijkheids graden
-    - Easy: Een grid van 3x3. In feitte een 8 puzzle.
+- Het is mogelijk om het niveau aan te passen in drie verschillende moeilijkheidsgraden:
+    - Easy: Een grid van 3x3.
     - Normal: Een grid van 4x4, de standaard 15 puzzle.
-    - Hard: Een grid van 5x5, een 24 puzzle.
-- Het is mogelijk om een afbeelding te selecteren om mee te spelen.
+    - Hard: Een grid van 5x5.
+- Het is mogelijk om een afbeelding te selecteren om mee te spelen. Er zijn vier voorgekozen afbeeldingen om mee te spelen.
 - Het is mogelijk om ipv een afbeelding genummerde vakjes te gebruiken.
-- Het is mogelijk om een eigen afbeelding te gebruiken.
+- Na het selecteren van een afbeelding en moeilijkheid moet de gebruiker op een knopje drukken om naar de activity te gaan waar het spel gespeeld wordt.
+- De foto moet in stukken worden geknipt in overeenstemming met de moeilijkheidsgraad. De tegel rechts onder moet weg zijn zodat er een andere tegel naartoe kan worden geschoven.
+- In de "Game Activity" wordt de afbeelding drie seconden geheel getoond. Hierna wordt de foto gehusseld en kan het spel beginnen.
+- Door te klikken op een tegel naast het lege vakje schuift de tegel naar de lege plek. Een tik op een tegel die niet tegen het lege vakje aanligt moet geen effect hebben.
+- Tijdens het spel kan er op de menu knop geklikt worden en verschijnt er een menu waar de gebruiker het volgende mee kan:
+    - Reset: de tegels worden weer geshuffled.
+    - Verander de moeilijkheidsgraad: Als dit wordt gedaan reset het spel zich met de gekozen moeilijkheidsgraad.
+    - Stoppen: de gebruiker gaat terug naar het vorige scherm en kan een nieuwe afbeelding kiezen.
+- Het menu mag alleen verschijnen in de "Game Activity".
+- De standaard moeilijkheidsgraad is normaal. Echter wanneer een gebruiker een spel op een andere moeilijkheidsgraad zet moet dit worden onthouden. Ook wanneer de app wordt gesloten.
+- De spelstatus moet worden onthouden wanneer de app wordt afgesloten.
+- Als de gebruiker het spel heeft gewonnen moet er een nieuwe activity worden gestart met daarop een felicitatie en de complete afbeelding, het totaal aantal moves, totale tijd en een knop om een nieuw spel te starten (terug naar het hoofdscherm). 
 
 Code
 ----
-Het programma wordt geschreven in xml en java. Xml wordt gebruikt voor statische elementen en de layout en java wordt gebruikt voor de dynamische content. 
+Het programma wordt geschreven in xml en java. Xml wordt gebruikt voor statische elementen en java wordt gebruikt voor de dynamische content. 
 
+De app wordt geschreven voor android met minimaal API level 11 (Android 3.0 Honeycomb), dit in tegenstelling tot de instructies van twee jaar geleden. API level 11 wordt door meer dan [87.9%] van de gebruikers ondersteund en geeft toegang tot de ActionBar APIs.
 
-
-
-
-Dillinger
-=========
-
-Dillinger is a cloud-enabled HTML5 Markdown editor.
-
-  - Type some Markdown text in the left window
-  - See the HTML in the right
-  - Magic
-
-Markdown is a lightweight markup language based on the formatting conventions that people naturally use in email.  As [John Gruber] writes on the [Markdown site] [1]:
-
-> The overriding design goal for Markdown's
-> formatting syntax is to make it as readable 
-> as possible. The idea is that a
-> Markdown-formatted document should be
-> publishable as-is, as plain text, without
-> looking like it's been marked up with tags
-> or formatting instructions.
-
-This text you see here is *actually* written in Markdown! To get a feel for Markdown's syntax, type some text into the left window and watch the results in the right.  
-
-Version
-----
-
-2.0
-
-Tech
------------
-
-Dillinger uses a number of open source projects to work properly:
-
-* [Ace Editor] - awesome web-based text editor
-* [Marked] - a super fast port of Markdown to JavaScript
-* [Twitter Bootstrap] - great UI boilerplate for modern web apps
-* [node.js] - evented I/O for the backend
-* [Express] - fast node.js network app framework [@tjholowaychuk]
-* [keymaster.js] - awesome keyboard handler lib by [@thomasfuchs]
-* [jQuery] - duh 
-
-Installation
---------------
-
-```sh
-git clone [git-repo-url] dillinger
-cd dillinger
-npm i -d
-mkdir -p public/files/{md,html,pdf}
-```
-
-##### Configure Plugins. Instructions in following README.md files
-
-* plugins/dropbox/README.md
-* plugins/github/README.md
-* plugins/googledrive/README.md
-
-```sh
-node app
-```
-
-
-License
-----
-
-MIT
-
-
-**Free Software, Hell Yeah!**
+####De volgende libraries/APIs worden gebruikt:
+- Er wordt veel gebruik gemaakt van de package android.widget voor Buttons, ImageViews etc.
+- android.View voor het aanspreken van widgets, OnClickListeners plaatsen etc.
+- Voor debugging wordt gebruik gemaakt van android.util.Log
+- Voor het weergeven en knippen van afbeeldingen wordt gebruik gemaakt van android.graphics
+- android.content.Intent voor het overschakelen naar een nieuwe activity
+- De spelstatus wordt onthouden via de SharedPreferences APIs
+- android.app.ActionBar voor het aanpassen van de ActionBar
 
 [15 puzzle]:http://en.wikipedia.org/wiki/15_puzzle
-[john gruber]:http://daringfireball.net/
-[@thomasfuchs]:http://twitter.com/thomasfuchs
-[1]:http://daringfireball.net/projects/markdown/
-[marked]:https://github.com/chjj/marked
-[Ace Editor]:http://ace.ajax.org
-[node.js]:http://nodejs.org
-[Twitter Bootstrap]:http://twitter.github.com/bootstrap/
-[keymaster.js]:https://github.com/madrobby/keymaster
-[jQuery]:http://jquery.com
-[@tjholowaychuk]:http://twitter.com/tjholowaychuk
-[express]:http://expressjs.com
+[87.9%]:http://developer.android.com/about/dashboards/index.html
+
