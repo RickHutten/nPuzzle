@@ -41,3 +41,4 @@ De app wordt geschreven voor android met minimaal API level 11 (Android 3.0 Hone
 
 [15 puzzle]:http://en.wikipedia.org/wiki/15_puzzle
 [87.9%]:http://developer.android.com/about/dashboards/index.html
+
