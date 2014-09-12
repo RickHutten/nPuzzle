@@ -5,24 +5,43 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
-
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 public class GameActivity extends Activity {
 
-    TextView testText;
-    int numberData;
+    int image;
+    String Difficulty;
+    RelativeLayout GameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        testText = (TextView)findViewById(R.id.testText);
 
         Bundle extras = getIntent().getExtras();
-        numberData = extras.getInt("Difficulty");
+        Difficulty = extras.getString("Difficulty");
+        image = extras.getInt("Image");
+        ImageView ImageView = new ImageView(this);
+        try {
+            ImageView.setImageResource(image);
+        } catch (OutOfMemoryError e ){
+            Log.i("Out of Memory Error", "You got fucked in the ass.");
+            System.gc();
+            try {
+                ImageView.setImageResource(image);
+            } catch (OutOfMemoryError r ) {
+                Log.i("Out of Memory Error", "You got fucked in the ass so badly it gonna hurt for a month.");
+            }
+        }
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT);
 
-        Log.i("intent", "" + numberData);
+        GameLayout = (RelativeLayout)findViewById(R.id.GameLayout);
+        GameLayout.addView(ImageView, 0, params);
+
+        Log.i("intent", "" + Difficulty);
     }
 
     @Override

@@ -9,9 +9,8 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.SeekBar;
@@ -23,15 +22,56 @@ public class MainActivity extends Activity {
     SeekBar seekBar;
     TextView TextView;
     Intent intent = new Intent("android.intent.action.GAME");
+    ImageView img_flower;
+    ImageView img_ice;
+    ImageView img_cupcake;
+    ImageView img_manhattan;
+    String Difficulty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ActionBar ab = getActionBar();
+        System.gc();
+
+        ActionBar ActionBar = getActionBar();
         ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#FF7519"));
-        ab.setBackgroundDrawable(colorDrawable);
+        ActionBar.setBackgroundDrawable(colorDrawable);
+
+        // Declare images and set OnClickListener
+        img_flower = (ImageView)findViewById(R.id.imgFlower);
+        img_ice = (ImageView)findViewById(R.id.imgIce);
+        img_cupcake = (ImageView)findViewById(R.id.imgCupcake);
+        img_manhattan = (ImageView)findViewById(R.id.imgManhattan);
+
+        img_flower.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectImage(view);
+            }
+        });
+
+        img_ice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectImage(view);
+            }
+        });
+
+        img_cupcake.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectImage(view);
+            }
+        });
+
+        img_manhattan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectImage(view);
+            }
+        });
 
         // Button to start the game and add an OnClickListener
         button_start = (Button)findViewById(R.id.button_start);
@@ -89,8 +129,83 @@ public class MainActivity extends Activity {
 
     // Go to game activity
     private void buttonStartClick() {
-        intent.putExtra("Difficulty", seekBar.getProgress());
+        switch (seekBar.getProgress()) {
+            case 0:
+                Difficulty = "Easy";
+                break;
+            case 49:
+                Difficulty = "Normal";
+                break;
+            case 99:
+                Difficulty = "Hard";
+                break;
+        }
+
+        intent.putExtra("Difficulty", Difficulty);
+        if (img_flower.isSelected()) {
+            intent.putExtra("Image", R.drawable.square_flower);
+        } else if (img_ice.isSelected()) {
+            intent.putExtra("Image", R.drawable.square_ice);
+        } else if (img_cupcake.isSelected()) {
+            intent.putExtra("Image", R.drawable.square_cupcake);
+        } else if (img_manhattan.isSelected()) {
+            intent.putExtra("Image", R.drawable.square_manhattan);
+        }
         startActivity(intent);
+    }
+
+    public void selectImage(View view) {
+        switch (view.getId())
+        {
+            case R.id.imgFlower:
+                button_start.setEnabled(true);
+                img_flower.setAlpha((float)1);
+                img_ice.setAlpha((float)0.5);
+                img_cupcake.setAlpha((float)0.5);
+                img_manhattan.setAlpha((float)0.5);
+                img_flower.setSelected(true);
+                img_ice.setSelected(false);
+                img_cupcake.setSelected(false);
+                img_manhattan.setSelected(false);
+                break;
+
+            case R.id.imgIce:
+                button_start.setEnabled(true);
+                img_ice.setAlpha((float)1);
+                img_flower.setAlpha((float)0.5);
+                img_cupcake.setAlpha((float)0.5);
+                img_manhattan.setAlpha((float)0.5);
+                img_flower.setSelected(false);
+                img_ice.setSelected(true);
+                img_cupcake.setSelected(false);
+                img_manhattan.setSelected(false);
+                break;
+
+            case R.id.imgCupcake:
+                button_start.setEnabled(true);
+                img_cupcake.setAlpha((float)1);
+                img_ice.setAlpha((float)0.5);
+                img_flower.setAlpha((float)0.5);
+                img_manhattan.setAlpha((float)0.5);
+                img_flower.setSelected(false);
+                img_ice.setSelected(false);
+                img_cupcake.setSelected(true);
+                img_manhattan.setSelected(false);
+                break;
+
+            case R.id.imgManhattan:
+                button_start.setEnabled(true);
+                img_manhattan.setAlpha((float)1);
+                img_ice.setAlpha((float)0.5);
+                img_cupcake.setAlpha((float)0.5);
+                img_flower.setAlpha((float)0.5);
+                img_flower.setSelected(false);
+                img_ice.setSelected(false);
+                img_cupcake.setSelected(false);
+                img_manhattan.setSelected(true);
+                break;
+        }
+
     }
 
     private void setDifficultyText(int progress) {
@@ -100,7 +215,7 @@ public class MainActivity extends Activity {
                 TextView.setText(R.string.Easy);
                 break;
             case 49:
-                TextView.setText(R.string.Medium);
+                TextView.setText(R.string.Normal);
                 break;
             case 99:
                 TextView.setText(R.string.Hard);
@@ -108,19 +223,4 @@ public class MainActivity extends Activity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        return id == R.id.action_settings || super.onOptionsItemSelected(item);
-    }
 }
