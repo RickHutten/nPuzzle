@@ -12,8 +12,7 @@ import android.widget.ImageView;
 public class SplashActivity extends Activity {
 
     // Duration of splash screen in milliseconds
-    final int SPLASH_DURATION = 2000;
-
+    final int splash_time = 2000;
     Bitmap bitmap;
 
     @Override
@@ -21,9 +20,9 @@ public class SplashActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        ImageView splashView = (ImageView)findViewById(R.id.imgSplash);
+        ImageView splash_view = (ImageView)findViewById(R.id.imgSplash);
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.splash2);
-        splashView.setImageBitmap(bitmap);
+        splash_view.setImageBitmap(bitmap);
 
         // Handler to start the MainActivity after SPLASH_DURATION time
         new Handler().postDelayed(new Runnable(){
@@ -33,11 +32,10 @@ public class SplashActivity extends Activity {
                 bitmap = null;
                 System.gc();
                 // Make intent that will start MainActivity
-                Intent mainIntent = new Intent("android.intent.action.SETTING");
-                SplashActivity.this.startActivity(mainIntent);
+                Intent main_intent = new Intent("android.intent.action.SETTING");
+                SplashActivity.this.startActivity(main_intent);
                 SplashActivity.this.finish();
             }
-        }, SPLASH_DURATION);
+        }, splash_time);
     }
 }
-// SplashActivity.this,MainActivity.class

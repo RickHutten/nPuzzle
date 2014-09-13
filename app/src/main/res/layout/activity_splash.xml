@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="rickhutten.npuzzle.SplashActivity"
-    android:background="#00ffffff"
-    android:clickable="false">
+    android:clickable="false"
+    android:background="#00ffffff">
 
     <ImageView
         android:layout_width="match_parent"

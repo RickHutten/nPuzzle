@@ -20,52 +20,56 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
-    <ImageView
-        android:src="@drawable/square_flower_small"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:id="@+id/imgFlower"
-        android:layout_marginLeft="20dp"
+    <TableLayout
+        android:layout_width="fill_parent"
         android:layout_below="@+id/selectImg"
-        android:layout_alignParentLeft="true"
-        android:clickable="false"
-        android:contentDescription="@null" />
+        android:layout_above="@+id/difficulty"
+        android:layout_height="wrap_content" >
 
+        <TableRow
+            android:layout_weight="0.5"
+            android:paddingBottom="20dp" >
 
-    <ImageView
-        android:src="@drawable/square_ice_small"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:id="@+id/imgIce"
-        android:layout_marginRight="20dp"
-        android:layout_below="@+id/selectImg"
-        android:layout_alignParentRight="true"
-        android:clickable="false"
-        android:contentDescription="@null" />
+            <ImageView
+                android:src="@drawable/square_flower_small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_marginRight="10dp"
+                android:id="@+id/imgFlower"
+                android:contentDescription="@null" />
 
-    <ImageView
-        android:src="@drawable/square_cupcake_small"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:id="@+id/imgCupcake"
-        android:layout_below="@+id/imgFlower"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_alignParentLeft="true"
-        android:clickable="false"
-        android:contentDescription="@null" />
+            <ImageView
+                android:src="@drawable/square_ice_small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:id="@+id/imgIce"
+                android:contentDescription="@null" />
 
-    <ImageView
-        android:src="@drawable/square_manhattan_small"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:id="@+id/imgManhattan"
-        android:layout_marginRight="20dp"
-        android:layout_below="@+id/imgIce"
-        android:layout_marginTop="20dp"
-        android:layout_alignParentRight="true"
-        android:clickable="false"
-        android:contentDescription="@null" />
+        </TableRow>
+
+        <TableRow
+            android:layout_weight="0.5"
+            android:paddingBottom="20dp">
+            <ImageView
+                android:src="@drawable/square_cupcake_small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:layout_marginRight="10dp"
+                android:id="@+id/imgCupcake"
+                android:contentDescription="@null" />
+
+            <ImageView
+                android:src="@drawable/square_manhattan_small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:id="@+id/imgManhattan"
+                android:contentDescription="@null" />
+        </TableRow>
+        </TableLayout>
 
     <TextView
         android:layout_width="wrap_content"
@@ -73,13 +77,13 @@
         android:text="@string/difficulty"
         android:id="@+id/difficulty"
         android:textSize="20sp"
-        android:layout_above="@+id/seekBar"
+        android:layout_above="@+id/seekbar"
         android:layout_centerHorizontal="true" />
 
     <SeekBar
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:id="@+id/seekBar"
+        android:id="@+id/seekbar"
         android:max="99"
         android:layout_above="@+id/setDifficulty"
         android:layout_centerHorizontal="true" />
@@ -91,7 +95,6 @@
         android:textSize="20sp"
         android:layout_above="@+id/button_start"
         android:id="@+id/setDifficulty"
-
         android:paddingBottom="20dp"
         android:layout_centerHorizontal="true" />
 

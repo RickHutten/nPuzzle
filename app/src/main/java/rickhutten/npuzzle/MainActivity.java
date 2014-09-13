@@ -3,7 +3,6 @@ package rickhutten.npuzzle;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -19,14 +18,48 @@ import android.widget.SeekBar;
 public class MainActivity extends Activity {
 
     Button button_start;
-    SeekBar seekBar;
-    TextView TextView;
+    SeekBar seekbar;
+    TextView textview;
     Intent intent = new Intent("android.intent.action.GAME");
     ImageView img_flower;
     ImageView img_ice;
     ImageView img_cupcake;
     ImageView img_manhattan;
     String Difficulty;
+
+    View.OnClickListener c = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            selectImage(view);
+        }
+    };
+
+    SeekBar.OnSeekBarChangeListener l = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if (0 <= progress && progress < 24) {
+                setDifficultyText(0);
+            } else if (24 <= progress && progress < 74) {
+                setDifficultyText(49);
+            } else if (74 <= progress && progress <= 99) {
+                setDifficultyText(99);
+            }
+        }
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) { }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            int progress = seekBar.getProgress();
+            if (0 <= progress && progress < 25) {
+                seekBar.setProgress(0);
+            } else if (25 <= progress && progress < 75) {
+                seekBar.setProgress(49);
+            } else if (75 <= progress && progress < 100) {
+                seekBar.setProgress(99);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +68,9 @@ public class MainActivity extends Activity {
 
         System.gc();
 
-        ActionBar ActionBar = getActionBar();
-        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#FF7519"));
-        ActionBar.setBackgroundDrawable(colorDrawable);
+        ActionBar actionbar = getActionBar();
+        ColorDrawable color_drawable = new ColorDrawable(getResources().getColor(R.color.orange));
+        actionbar.setBackgroundDrawable(color_drawable);
 
         // Declare images and set OnClickListener
         img_flower = (ImageView)findViewById(R.id.imgFlower);
@@ -45,33 +78,10 @@ public class MainActivity extends Activity {
         img_cupcake = (ImageView)findViewById(R.id.imgCupcake);
         img_manhattan = (ImageView)findViewById(R.id.imgManhattan);
 
-        img_flower.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectImage(view);
-            }
-        });
-
-        img_ice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectImage(view);
-            }
-        });
-
-        img_cupcake.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectImage(view);
-            }
-        });
-
-        img_manhattan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectImage(view);
-            }
-        });
+        img_flower.setOnClickListener(c);
+        img_ice.setOnClickListener(c);
+        img_cupcake.setOnClickListener(c);
+        img_manhattan.setOnClickListener(c);
 
         // Button to start the game and add an OnClickListener
         button_start = (Button)findViewById(R.id.button_start);
@@ -82,54 +92,27 @@ public class MainActivity extends Activity {
             }
         });
 
-        // Seekbar width 2/3 of screen width
-        seekBar = (SeekBar)findViewById(R.id.seekBar);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)seekBar.getLayoutParams();
-        seekBar.setProgress(49);
+        seekbar = (SeekBar)findViewById(R.id.seekbar);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)seekbar.getLayoutParams();
+        seekbar.setProgress(49);
 
         // Textview of difficulty
-        TextView = (TextView)(findViewById(R.id.setDifficulty));
+        textview = (TextView)(findViewById(R.id.setDifficulty));
         setDifficultyText(49);
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (0 <= progress && progress < 24) {
-                    setDifficultyText(0);
-                } else if (24 <= progress && progress < 74) {
-                    setDifficultyText(49);
-                } else if (74 <= progress && progress <= 99) {
-                    setDifficultyText(99);
-                }
-            }
+        seekbar.setOnSeekBarChangeListener(l);
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) { }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                int progress = seekBar.getProgress();
-                if (0 <= progress && progress < 25) {
-                    seekBar.setProgress(0);
-                } else if (25 <= progress && progress < 75) {
-                    seekBar.setProgress(49);
-                } else if (75 <= progress && progress < 100) {
-                    seekBar.setProgress(99);
-                }
-            }
-        });
-
+        // Seekbar width 2/3 of screen width
         Display display = getWindowManager().getDefaultDisplay();
         DisplayMetrics outMetrics = new DisplayMetrics ();
         display.getMetrics(outMetrics);
-
         params.width = (int)(outMetrics.widthPixels / 1.5);
-        seekBar.setLayoutParams(params);
+        seekbar.setLayoutParams(params);
     }
 
     // Go to game activity
     private void buttonStartClick() {
-        switch (seekBar.getProgress()) {
+        switch (seekbar.getProgress()) {
             case 0:
                 Difficulty = "Easy";
                 break;
@@ -154,7 +137,7 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
-    public void selectImage(View view) {
+    private void selectImage(View view) {
         switch (view.getId())
         {
             case R.id.imgFlower:
@@ -212,13 +195,13 @@ public class MainActivity extends Activity {
         switch (progress)
         {
             case 0:
-                TextView.setText(R.string.Easy);
+                textview.setText(R.string.Easy);
                 break;
             case 49:
-                TextView.setText(R.string.Normal);
+                textview.setText(R.string.Normal);
                 break;
             case 99:
-                TextView.setText(R.string.Hard);
+                textview.setText(R.string.Hard);
                 break;
         }
     }
