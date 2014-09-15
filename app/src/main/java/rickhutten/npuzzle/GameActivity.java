@@ -1,6 +1,9 @@
 package rickhutten.npuzzle;
 
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -9,12 +12,14 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 public class GameActivity extends Activity {
 
@@ -49,23 +54,62 @@ public class GameActivity extends Activity {
             public void run() {
                 delete_image(begin_image);
                 setN(difficulty);
+                createBitmaps(image);
                 createTableLayout();
             }
         }, sleep_time);
 
     }
 
+    public void createBitmaps(int image_id) {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), image_id);
+        int tile_width = bitmap.getWidth() / n;
+        int tile_height = bitmap.getHeight() / n;
+        Log.i("width", "" + bitmap.getWidth());
+        Log.i("height", "" + bitmap.getHeight());
+        Log.i("tile_width", "" + tile_width);
+        Log.i("tile_height", "" + tile_height);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++){
+                Log.i("tile_width * j, tile_height * i, tile_width * (j + 1), tile_height * (i + 1)", "" + (tile_width * j) + "," + (tile_height * i) + "," + (tile_width * (j + 1)) + "," + (tile_height * (i + 1)));
+                Bitmap cropped_image = Bitmap.createBitmap(bitmap, tile_width * j, tile_height * i, tile_width, tile_height);
+                Log.i("cropped width - height", "" + cropped_image.getWidth() + "," + cropped_image.getHeight());
+                String file_name = "" + ((j + 1) * 100 + (i + 1));
+                saveBitmap(cropped_image, file_name, getApplicationContext());
+            }
+        }
+    }
+
+    public void saveBitmap(Bitmap bitmap, String file_name, Context context) {
+        FileOutputStream output;
+        try {
+            output = context.openFileOutput(file_name, Context.MODE_PRIVATE);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
+            output.close();
+            Log.i("bitmap saved succesfully:",file_name);
+        } catch (Exception e) {
+            Log.i("failed to save bitmap:", file_name);
+            e.printStackTrace();
+        }
+    }
+
+    public Bitmap loadBitmap(String file_name, Context context) {
+        try{
+            FileInputStream input = context.openFileInput(file_name);
+            Bitmap bitmap = BitmapFactory.decodeStream(input);
+            input.close();
+            return bitmap;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private void createTableLayout() {
         table_layout = (TableLayout)findViewById(R.id.table_layout);
         TableRow.LayoutParams lp_row = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT,(float)1);
-        TableRow.LayoutParams lp_imageview = new TableRow.LayoutParams(0, 0,(float)1);
-
-        Display display = getWindowManager().getDefaultDisplay();
-        DisplayMetrics out_metrics = new DisplayMetrics ();
-        display.getMetrics(out_metrics);
-        lp_imageview.width = (out_metrics.widthPixels / n);
-        lp_imageview.setMargins(5,0,5,0);
-        lp_imageview.height = (out_metrics.widthPixels / n) - (1 + ((5 - n) / 2)) * 10;
+        TableRow.LayoutParams lp_imageview = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT,(float)1);
 
         for (int i = 0; i < n; i++) {
             TableRow row = new TableRow(this);
@@ -74,11 +118,14 @@ public class GameActivity extends Activity {
                 /* i.e. if n = 3, the imageviews will have id's according to their 'x0y' coordinates
                 top left will have id 101, bottom left id 103, bottom right id 303 etc.*/
                 imageview.setId((j + 1) * 100 + (i + 1));
-                imageview.setImageResource(R.drawable.square_manhattan_small);
+                imageview.setImageBitmap(loadBitmap("" + imageview.getId(), getApplicationContext()));
+                lp_imageview.setMargins(5,5,5,5);
                 imageview.setLayoutParams(lp_imageview);
+                imageview.setAdjustViewBounds(true);
                 imageview.setOnClickListener(listener);
                 row.addView(imageview);
             }
+
             row.setLayoutParams(lp_row);
             table_layout.addView(row);
         }
@@ -106,8 +153,9 @@ public class GameActivity extends Activity {
         image_view.setImageResource(image);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,
-                RelativeLayout.LayoutParams.MATCH_PARENT);
-
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        image_view.setAdjustViewBounds(true);
         game_layout = (RelativeLayout)findViewById(R.id.GameLayout);
         game_layout.addView(image_view, 0, params);
         return image_view;
