@@ -6,9 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,13 +15,12 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 public class GameActivity extends Activity {
 
-    int sleep_time = 3000;
+    int sleep_time = 2000;
     int image;
     String difficulty;
     RelativeLayout game_layout;
@@ -34,7 +31,7 @@ public class GameActivity extends Activity {
     View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            setAlpha(view);
+            tileClick(view);
         }
     };
 
@@ -65,30 +62,24 @@ public class GameActivity extends Activity {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), image_id);
         int tile_width = bitmap.getWidth() / n;
         int tile_height = bitmap.getHeight() / n;
-        Log.i("width", "" + bitmap.getWidth());
-        Log.i("height", "" + bitmap.getHeight());
-        Log.i("tile_width", "" + tile_width);
-        Log.i("tile_height", "" + tile_height);
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++){
-                Log.i("tile_width * j, tile_height * i, tile_width * (j + 1), tile_height * (i + 1)", "" + (tile_width * j) + "," + (tile_height * i) + "," + (tile_width * (j + 1)) + "," + (tile_height * (i + 1)));
                 Bitmap cropped_image = Bitmap.createBitmap(bitmap, tile_width * j, tile_height * i, tile_width, tile_height);
-                Log.i("cropped width - height", "" + cropped_image.getWidth() + "," + cropped_image.getHeight());
                 String file_name = "" + ((j + 1) * 100 + (i + 1));
                 saveBitmap(cropped_image, file_name, getApplicationContext());
             }
         }
+        bitmap.recycle();
     }
 
     public void saveBitmap(Bitmap bitmap, String file_name, Context context) {
         FileOutputStream output;
         try {
             output = context.openFileOutput(file_name, Context.MODE_PRIVATE);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, output);
             output.close();
-            Log.i("bitmap saved succesfully:",file_name);
         } catch (Exception e) {
-            Log.i("failed to save bitmap:", file_name);
+            Log.i("Failed to save bitmap:", file_name);
             e.printStackTrace();
         }
     }
@@ -99,8 +90,8 @@ public class GameActivity extends Activity {
             Bitmap bitmap = BitmapFactory.decodeStream(input);
             input.close();
             return bitmap;
-        }
-        catch(Exception e){
+        } catch(Exception e){
+            Log.i("Failed to load bitmap:", file_name);
             e.printStackTrace();
             return null;
         }
@@ -119,7 +110,12 @@ public class GameActivity extends Activity {
                 top left will have id 101, bottom left id 103, bottom right id 303 etc.*/
                 imageview.setId((j + 1) * 100 + (i + 1));
                 imageview.setImageBitmap(loadBitmap("" + imageview.getId(), getApplicationContext()));
+                // Set tag to know which bitmap was placed in the imageview
+                imageview.setTag("" + imageview.getId());
                 lp_imageview.setMargins(5,5,5,5);
+                if (i == (n-1) && j == (n-1)) {
+                    imageview.setAlpha((float)0);
+                }
                 imageview.setLayoutParams(lp_imageview);
                 imageview.setAdjustViewBounds(true);
                 imageview.setOnClickListener(listener);
@@ -131,10 +127,71 @@ public class GameActivity extends Activity {
         }
     }
 
-    private void setAlpha(View view) {
-        view.setAlpha((float)0.5);
+    private void checkIfCompleted() {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                int id = (j + 1) * 100 + (i + 1);
+                ImageView imageview = (ImageView)findViewById(id);
+                int image_id = Integer.parseInt((String)imageview.getTag());
+
+                if (id != image_id) {
+                    TextView textView = (TextView)findViewById(R.id.textView2);
+                    textView.setText("");
+                    return;
+                }
+            }
+        }
         TextView textView = (TextView)findViewById(R.id.textView2);
-        textView.setText("" + view.getId());
+        textView.setText("Gewonnen!");
+    }
+
+    private void switchViews(String image_name, int id_new_image_holder, int id_pressed_view) {
+        ImageView imageview_picture = (ImageView)findViewById(id_new_image_holder);
+        imageview_picture.setImageBitmap(loadBitmap(image_name, getApplicationContext()));
+        imageview_picture.setAlpha((float)1);
+        imageview_picture.setTag(image_name);
+        ImageView imageview_pressed = (ImageView)findViewById(id_pressed_view);
+        imageview_pressed.setTag("" + (n * 100 + n));
+        imageview_pressed.setAlpha((float)0);
+        checkIfCompleted();
+    }
+
+    private void tileClick(View view) {
+        if (view.getAlpha() == 1) {
+            int view_id = view.getId();
+            try {
+                ImageView imageview_top = (ImageView)findViewById(view_id - 1);
+                if (imageview_top.getAlpha() == 0) {
+                    switchViews((String)view.getTag(), view_id - 1, view_id);
+                }
+            } catch (Exception e) {
+                // There is no imageview on the top (border)
+            }
+            try {
+                ImageView imageview_under = (ImageView)findViewById(view_id + 1);
+                if (imageview_under.getAlpha() == 0) {
+                    switchViews((String)view.getTag(), view_id + 1, view_id);
+                }
+            } catch (Exception e) {
+                // There is no imageview on the bottom (border)
+            }
+            try {
+                ImageView imageview_left = (ImageView)findViewById(view_id - 100);
+                if (imageview_left.getAlpha() == 0) {
+                    switchViews((String)view.getTag(), view_id - 100, view_id);
+                }
+            } catch (Exception e) {
+                // There is no imageview on the left (border)
+            }
+            try {
+                ImageView imageview_right = (ImageView)findViewById(view_id + 100);
+                if (imageview_right.getAlpha() == 0) {
+                    switchViews((String)view.getTag(), view_id + 100, view_id);
+                }
+            } catch (Exception e) {
+                // There is no imageview on the right (border)
+            }
+        }
     }
 
     private void setN(String difficulty) {

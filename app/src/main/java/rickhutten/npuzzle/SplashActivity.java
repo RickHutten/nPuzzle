@@ -24,7 +24,7 @@ public class SplashActivity extends Activity {
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.splash2);
         splash_view.setImageBitmap(bitmap);
 
-        // Handler to start the MainActivity after SPLASH_DURATION time
+        // Handler to start the MainActivity after splash_time time
         new Handler().postDelayed(new Runnable(){
             @Override
             public void run() {

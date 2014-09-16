@@ -70,7 +70,9 @@ public class MainActivity extends Activity {
 
         ActionBar actionbar = getActionBar();
         ColorDrawable color_drawable = new ColorDrawable(getResources().getColor(R.color.orange));
-        actionbar.setBackgroundDrawable(color_drawable);
+        if (actionbar != null) {
+            actionbar.setBackgroundDrawable(color_drawable);
+        }
 
         // Declare images and set OnClickListener
         img_flower = (ImageView)findViewById(R.id.imgFlower);
