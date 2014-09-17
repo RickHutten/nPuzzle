@@ -24,6 +24,7 @@ Functies
 - De spelstatus moet worden onthouden wanneer de app wordt afgesloten.
 - Als de gebruiker het spel heeft gewonnen moet er een nieuwe activity worden gestart met daarop een felicitatie en de complete afbeelding, het totaal aantal moves, totale tijd en een knop om een nieuw spel te starten (terug naar het hoofdscherm). 
 
+
 Code
 ----
 Het programma wordt geschreven in xml en java. Xml wordt gebruikt voor statische elementen en java wordt gebruikt voor de dynamische content. 
@@ -38,6 +39,10 @@ De app wordt geschreven voor android met minimaal API level 11 (Android 3.0 Hone
 - android.content.Intent voor het overschakelen naar een nieuwe activity
 - De spelstatus wordt onthouden via de SharedPreferences APIs
 - android.app.ActionBar voor het aanpassen van de ActionBar
+
+Mockup
+-----
+![Mock up](doc/Mockup.PNG)
 
 [15 puzzle]:http://en.wikipedia.org/wiki/15_puzzle
 [87.9%]:http://developer.android.com/about/dashboards/index.html

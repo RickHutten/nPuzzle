@@ -1,10 +1,8 @@
 package rickhutten.npuzzle;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -52,7 +50,7 @@ public class GameActivity extends Activity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                delete_image(begin_image);
+                deleteImage(begin_image);
                 setN(difficulty);
                 createBitmaps(image);
                 createTableLayout();
@@ -221,7 +219,7 @@ public class GameActivity extends Activity {
         return image_view;
     }
 
-    private void delete_image(View view) {
+    private void deleteImage(View view) {
         game_layout.removeView(view);
         System.gc();
     }
