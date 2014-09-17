@@ -1,7 +1,10 @@
 package rickhutten.npuzzle;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -235,8 +238,16 @@ public class GameActivity extends Activity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        return id == R.id.action_settings || super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.menu_change_difficulty:
+                Intent change_diff_intent = new Intent("android.intent.action.DIFFICULTY");
+                change_diff_intent.putExtra("difficulty", difficulty);
+                change_diff_intent.putExtra("Image", image);
+                GameActivity.this.startActivity(change_diff_intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

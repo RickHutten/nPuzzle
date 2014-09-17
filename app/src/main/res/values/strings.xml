@@ -7,9 +7,9 @@
     <string name="selectImg">Select image</string>
     <string name="difficulty">Difficulty</string>
     <string name="game">Game Activity</string>
-    <string name="action_settings">Settings</string>
     <string name="Easy">Easy</string>
     <string name="Normal">Normal</string>
     <string name="Hard">Hard</string>
+    <string name="change_difficulty">Change difficulty</string>
 
 </resources>

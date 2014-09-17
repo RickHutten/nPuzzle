@@ -2,8 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="rickhutten.npuzzle.GameActivity" >
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
+    <item android:id="@+id/menu_change_difficulty"
+        android:title="@string/change_difficulty"
+        android:orderInCategory="1"
         app:showAsAction="never" />
 </menu>

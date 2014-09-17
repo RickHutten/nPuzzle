@@ -2,12 +2,10 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:style/Theme.Holo.Light">
+    <style name="AppTheme" parent="android:style/Theme.Holo.Light"/>
 
-    </style>
+    <style name="SplashTheme" parent="android:style/Theme.Holo.Light.NoActionBar"/>
 
-    <style name="SplashTheme" parent="android:style/Theme.Holo.Light.NoActionBar">
-
-    </style>
+    <style name="DialogTheme" parent="android:Theme.Holo.Light.Dialog.NoActionBar"/>
 
 </resources>
