@@ -16,8 +16,11 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GameActivity extends Activity {
 
@@ -27,6 +30,10 @@ public class GameActivity extends Activity {
     RelativeLayout game_layout;
     TableLayout table_layout;
     View begin_image;
+    int move_count;
+    TextView text_move;
+    TextView text_time;
+    String time;
     int n; //Amount tiles per row/column
 
     View.OnClickListener listener = new View.OnClickListener() {
@@ -41,6 +48,8 @@ public class GameActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        move_count = 0;
+
         Bundle extras = getIntent().getExtras();
         difficulty = extras.getString("Difficulty");
         image = extras.getInt("Image");
@@ -54,9 +63,57 @@ public class GameActivity extends Activity {
                 setN(difficulty);
                 createBitmaps(image);
                 createTableLayout();
+
+                TableRow tablerow = (TableRow)findViewById(R.id.tablerow_time_moves);
+                tablerow.setVisibility(View.VISIBLE);
+                text_move = (TextView)findViewById(R.id.txt_move_count);
+                text_move.setText("Moves\n" + move_count);
+
+                text_time = (TextView)findViewById(R.id.txt_time);
+                text_time.setText("Time\n00:00");
+
+                setTimer();
             }
         }, sleep_time);
+    }
 
+    private void setTimer() {
+        final long time_start = System.currentTimeMillis();
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        long time_now = System.currentTimeMillis();
+                        int elapsed_time = (int)((time_now - time_start) / 1000);
+                        time = parseTime(elapsed_time);
+                        text_time.setText("Time\n" + time);
+                    }
+                });
+            }
+        }, 1000, 1000);
+    }
+
+    private String parseTime(int seconds) {
+        int remaining_seconds = seconds % 60;
+        int minutes = (seconds - (remaining_seconds)) / 60;
+        String sec;
+        String min;
+        if (remaining_seconds < 10) {
+            sec = "0" + remaining_seconds;
+        } else {
+            sec = "" + remaining_seconds;
+        }
+        if (minutes < 10) {
+            min = "0" + minutes;
+        } else {
+            min = "" + minutes;
+        }
+
+        return min + ":" + sec;
     }
 
     public void createBitmaps(int image_id) {
@@ -136,14 +193,20 @@ public class GameActivity extends Activity {
                 int image_id = Integer.parseInt((String)imageview.getTag());
 
                 if (id != image_id) {
-                    TextView textView = (TextView)findViewById(R.id.textView2);
-                    textView.setText("");
+                    // The game is not won
                     return;
                 }
             }
         }
-        TextView textView = (TextView)findViewById(R.id.textView2);
-        textView.setText("Gewonnen!");
+        // The game is won
+        Intent win_intent = new Intent("android.intent.action.WIN");
+        win_intent.putExtra("Image", image);
+        win_intent.putExtra("Moves", move_count);
+        win_intent.putExtra("Time", time);
+        win_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
+        GameActivity.this.startActivity(win_intent);
+        this.finish();
     }
 
     private void switchViews(String image_name, int id_new_image_holder, int id_pressed_view) {
@@ -154,7 +217,8 @@ public class GameActivity extends Activity {
         ImageView imageview_pressed = (ImageView)findViewById(id_pressed_view);
         imageview_pressed.setTag("" + (n * 100 + n));
         imageview_pressed.setAlpha((float)0);
-        checkIfCompleted();
+        move_count++;
+        text_move.setText("Moves\n" + move_count);
     }
 
     private void tileClick(View view) {
@@ -192,6 +256,7 @@ public class GameActivity extends Activity {
             } catch (Exception e) {
                 // There is no imageview on the right (border)
             }
+            checkIfCompleted();
         }
     }
 
@@ -209,6 +274,12 @@ public class GameActivity extends Activity {
         System.gc();
         ImageView image_view = new ImageView(this);
         image_view.setImageResource(image);
+
+        int padding_in_dp = 50;  // Padding = 50dp
+        float scale = getResources().getDisplayMetrics().density;
+        int padding_in_px = (int)(padding_in_dp * scale + (float)0.5); // Extra 0.5 for rounding
+
+        image_view.setPadding(0,padding_in_px,0,0);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -242,6 +313,11 @@ public class GameActivity extends Activity {
                 change_diff_intent.putExtra("difficulty", difficulty);
                 change_diff_intent.putExtra("Image", image);
                 GameActivity.this.startActivity(change_diff_intent);
+                return true;
+            case R.id.menu_solution:
+                Intent see_solution = new Intent("android.intent.action.SOLUTION");
+                see_solution.putExtra("Image", image);
+                GameActivity.this.startActivity(see_solution);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

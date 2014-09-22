@@ -8,11 +8,12 @@
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
         <activity
             android:name=".SplashActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
+            android:label="@string/app_name_no_number"
             android:launchMode="singleInstance"
+            android:screenOrientation="portrait"
             android:theme="@style/SplashTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,9 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
+            android:label="@string/app_name_no_number"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.SETTING" />
@@ -30,9 +32,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".GameActivity"
-            android:label="@string/app_name"
+            android:label="@string/app_name_no_number"
+            android:icon="@null"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.GAME" />
@@ -40,16 +44,39 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ChangeDifficultyActivity"
-            android:label="@string/app_name"
-            android:theme="@style/DialogTheme">
+            android:label="@string/app_name_no_number"
+            android:theme="@style/DialogTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.DIFFICULTY" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".SolutionActivity"
+            android:label="@string/app_name_no_number"
+            android:theme="@style/DialogTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.SOLUTION" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".WinActivity"
+            android:label="@string/app_name_no_number" >
+            <intent-filter>
+                <action android:name="android.intent.action.WIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>
