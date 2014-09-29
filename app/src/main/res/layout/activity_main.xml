@@ -92,18 +92,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:layout_above="@+id/button_start"
+        android:layout_above="@+id/button_holder"
         android:id="@+id/setDifficulty"
         android:paddingBottom="20dp"
         android:layout_centerHorizontal="true" />
 
-    <Button
+    <TableRow
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/button_start"
-        android:id="@+id/button_start"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:enabled="false" />
+        android:id="@+id/button_holder">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_start"
+            android:id="@+id/button_start"
+            android:enabled="false" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_continue"
+            android:id="@+id/button_continue"
+            android:enabled="false" />
+
+    </TableRow>
+
+
 
 </RelativeLayout>

@@ -1,11 +1,12 @@
 package rickhutten.npuzzle;
 
-import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.Button;
@@ -18,14 +19,18 @@ import android.widget.SeekBar;
 public class MainActivity extends Activity {
 
     Button button_start;
+    Button button_continue;
     SeekBar seekbar;
     TextView textview;
-    Intent intent = new Intent("android.intent.action.GAME");
     ImageView img_flower;
     ImageView img_ice;
     ImageView img_cupcake;
     ImageView img_manhattan;
-    String Difficulty;
+    String difficulty;
+    SharedPreferences sharedpreferences;
+    private static final int difficulty_easy = 0;
+    private static final int difficulty_normal = 49;
+    private static final int difficulty_hard = 99;
 
     View.OnClickListener c = new View.OnClickListener() {
         @Override
@@ -38,25 +43,27 @@ public class MainActivity extends Activity {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (0 <= progress && progress < 24) {
-                setDifficultyText(0);
+                setDifficultyText(difficulty_easy);
             } else if (24 <= progress && progress < 74) {
-                setDifficultyText(49);
+                setDifficultyText(difficulty_normal);
             } else if (74 <= progress && progress <= 99) {
-                setDifficultyText(99);
+                setDifficultyText(difficulty_hard);
             }
         }
+
         @Override
-        public void onStartTrackingTouch(SeekBar seekBar) { }
+        public void onStartTrackingTouch(SeekBar seekBar) {
+        }
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             int progress = seekBar.getProgress();
             if (0 <= progress && progress < 25) {
-                seekBar.setProgress(0);
+                seekBar.setProgress(difficulty_easy);
             } else if (25 <= progress && progress < 75) {
-                seekBar.setProgress(49);
+                seekBar.setProgress(difficulty_normal);
             } else if (75 <= progress && progress < 100) {
-                seekBar.setProgress(99);
+                seekBar.setProgress(difficulty_hard);
             }
         }
     };
@@ -68,17 +75,11 @@ public class MainActivity extends Activity {
 
         System.gc();
 
-        ActionBar actionbar = getActionBar();
-        ColorDrawable color_drawable = new ColorDrawable(getResources().getColor(R.color.orange));
-        if (actionbar != null) {
-            actionbar.setBackgroundDrawable(color_drawable);
-        }
-
         // Declare images and set OnClickListener
-        img_flower = (ImageView)findViewById(R.id.imgFlower);
-        img_ice = (ImageView)findViewById(R.id.imgIce);
-        img_cupcake = (ImageView)findViewById(R.id.imgCupcake);
-        img_manhattan = (ImageView)findViewById(R.id.imgManhattan);
+        img_flower = (ImageView) findViewById(R.id.imgFlower);
+        img_ice = (ImageView) findViewById(R.id.imgIce);
+        img_cupcake = (ImageView) findViewById(R.id.imgCupcake);
+        img_manhattan = (ImageView) findViewById(R.id.imgManhattan);
 
         img_flower.setOnClickListener(c);
         img_ice.setOnClickListener(c);
@@ -86,7 +87,7 @@ public class MainActivity extends Activity {
         img_manhattan.setOnClickListener(c);
 
         // Button to start the game and add an OnClickListener
-        button_start = (Button)findViewById(R.id.button_start);
+        button_start = (Button) findViewById(R.id.button_start);
         button_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,39 +95,73 @@ public class MainActivity extends Activity {
             }
         });
 
-        seekbar = (SeekBar)findViewById(R.id.seekbar);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)seekbar.getLayoutParams();
-        seekbar.setProgress(49);
+        button_continue = (Button) findViewById(R.id.button_continue);
+        button_continue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                buttonContinueClick();
+            }
+        });
+
+        seekbar = (SeekBar) findViewById(R.id.seekbar);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) seekbar.getLayoutParams();
+        seekbar.setProgress(difficulty_normal);
 
         // Textview of difficulty
-        textview = (TextView)(findViewById(R.id.setDifficulty));
-        setDifficultyText(49);
+        textview = (TextView) (findViewById(R.id.setDifficulty));
+        setDifficultyText(difficulty_normal);
 
         seekbar.setOnSeekBarChangeListener(l);
 
         // Seekbar width 2/3 of screen width
         Display display = getWindowManager().getDefaultDisplay();
-        DisplayMetrics outMetrics = new DisplayMetrics ();
+        DisplayMetrics outMetrics = new DisplayMetrics();
         display.getMetrics(outMetrics);
-        params.width = (int)(outMetrics.widthPixels / 1.5);
+        params.width = (int) (outMetrics.widthPixels / 1.5);
         seekbar.setLayoutParams(params);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("onResume", "onResume Mainactivity");
+        sharedpreferences = getSharedPreferences("prefs", Context.MODE_MULTI_PROCESS);
+        Button button_continue = (Button) findViewById(R.id.button_continue);
+        if (sharedpreferences.contains("preference")) {
+            Log.i("sharedPreferences found in main", "true");
+            button_continue.setEnabled(true);
+        } else {
+            button_continue.setEnabled(false);
+        }
+    }
+
+    private void buttonContinueClick() {
+        Intent intent = new Intent(MainActivity.this, GameActivity.class);
+        difficulty = sharedpreferences.getString("difficulty", "");
+        int image = sharedpreferences.getInt("image", -1);
+        intent.putExtra("Difficulty", difficulty);
+        intent.putExtra("Image", image);
+        intent.putExtra("preferences", true);
+
+        startActivity(intent);
     }
 
     // Go to game activity
     private void buttonStartClick() {
         switch (seekbar.getProgress()) {
-            case 0:
-                Difficulty = "Easy";
+            case difficulty_easy:
+                difficulty = "Easy";
                 break;
-            case 49:
-                Difficulty = "Normal";
+            case difficulty_normal:
+                difficulty = "Normal";
                 break;
-            case 99:
-                Difficulty = "Hard";
+            case difficulty_hard:
+                difficulty = "Hard";
                 break;
         }
-
-        intent.putExtra("Difficulty", Difficulty);
+        Intent intent = new Intent(MainActivity.this, GameActivity.class);
+        intent.putExtra("Difficulty", difficulty);
+        intent.putExtra("preferences", false);
         if (img_flower.isSelected()) {
             intent.putExtra("Image", R.drawable.square_flower);
         } else if (img_ice.isSelected()) {
@@ -140,72 +175,36 @@ public class MainActivity extends Activity {
     }
 
     private void selectImage(View view) {
-        switch (view.getId())
-        {
-            case R.id.imgFlower:
-                button_start.setEnabled(true);
-                img_flower.setAlpha((float)1);
-                img_ice.setAlpha((float)0.5);
-                img_cupcake.setAlpha((float)0.5);
-                img_manhattan.setAlpha((float)0.5);
-                img_flower.setSelected(true);
-                img_ice.setSelected(false);
-                img_cupcake.setSelected(false);
-                img_manhattan.setSelected(false);
-                break;
 
-            case R.id.imgIce:
-                button_start.setEnabled(true);
-                img_ice.setAlpha((float)1);
-                img_flower.setAlpha((float)0.5);
-                img_cupcake.setAlpha((float)0.5);
-                img_manhattan.setAlpha((float)0.5);
-                img_flower.setSelected(false);
-                img_ice.setSelected(true);
-                img_cupcake.setSelected(false);
-                img_manhattan.setSelected(false);
-                break;
+        button_start.setEnabled(true);
+        ImageView[] images = {img_flower, img_ice, img_cupcake, img_manhattan};
+        int id_pressed = view.getId();
 
-            case R.id.imgCupcake:
-                button_start.setEnabled(true);
-                img_cupcake.setAlpha((float)1);
-                img_ice.setAlpha((float)0.5);
-                img_flower.setAlpha((float)0.5);
-                img_manhattan.setAlpha((float)0.5);
-                img_flower.setSelected(false);
-                img_ice.setSelected(false);
-                img_cupcake.setSelected(true);
-                img_manhattan.setSelected(false);
-                break;
-
-            case R.id.imgManhattan:
-                button_start.setEnabled(true);
-                img_manhattan.setAlpha((float)1);
-                img_ice.setAlpha((float)0.5);
-                img_cupcake.setAlpha((float)0.5);
-                img_flower.setAlpha((float)0.5);
-                img_flower.setSelected(false);
-                img_ice.setSelected(false);
-                img_cupcake.setSelected(false);
-                img_manhattan.setSelected(true);
-                break;
+        for (int i = 0; i < images.length; i++) {
+            if (images[i].getId() == id_pressed) {
+                images[i].setAlpha((float) 1);
+                images[i].setSelected(true);
+            } else {
+                images[i].setAlpha((float) 0.5);
+                images[i].setSelected(false);
+            }
         }
-
     }
 
     private void setDifficultyText(int progress) {
         switch (progress)
         {
-            case 0:
+            case difficulty_easy:
                 textview.setText(R.string.Easy);
                 break;
-            case 49:
+            case difficulty_normal:
                 textview.setText(R.string.Normal);
                 break;
-            case 99:
+            case difficulty_hard:
                 textview.setText(R.string.Hard);
                 break;
         }
     }
 
 }
+

@@ -10,4 +10,8 @@
         android:title="@string/change_difficulty"
         android:orderInCategory="2"
         app:showAsAction="never" />
+    <item android:id="@+id/quit"
+        android:title="@string/quit"
+        android:orderInCategory="3"
+        app:showAsAction="never" />
 </menu>

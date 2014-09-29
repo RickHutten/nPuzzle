@@ -3,6 +3,7 @@ package rickhutten.npuzzle;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -16,9 +17,8 @@ import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -27,6 +27,8 @@ public class GameActivity extends Activity {
     int sleep_time = 2000;
     int image;
     String difficulty;
+    Boolean save_state = true;
+    Boolean preference;
     RelativeLayout game_layout;
     TableLayout table_layout;
     View begin_image;
@@ -34,6 +36,11 @@ public class GameActivity extends Activity {
     TextView text_move;
     TextView text_time;
     String time;
+    ArrayList<Integer> tile_setup = new ArrayList<Integer>();
+    ArrayList<Bitmap> bitmap_array = new ArrayList<Bitmap>();
+    ArrayList<ImageView> imageviews_array = new ArrayList<ImageView>();
+
+    SharedPreferences sharedpreferences;
     int n; //Amount tiles per row/column
 
     View.OnClickListener listener = new View.OnClickListener() {
@@ -46,35 +53,168 @@ public class GameActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i("onCreate", "onCreate");
         setContentView(R.layout.activity_game);
+        sharedpreferences = getSharedPreferences("prefs", Context.MODE_MULTI_PROCESS);
 
         move_count = 0;
 
         Bundle extras = getIntent().getExtras();
         difficulty = extras.getString("Difficulty");
         image = extras.getInt("Image");
+        preference = extras.getBoolean("preferences");
 
-        begin_image = setImage();
+        if (!preference) {
+            sharedpreferences.edit().clear().apply();
+        }
+
+        setN(difficulty);
+
+        try {
+            begin_image = setImage();
+        } catch (OutOfMemoryError e) {
+            Log.i("OutOfMemoryError, trying again.", "begin_image = setImage();");
+            System.gc();
+            begin_image = setImage();
+        }
+
+        createTableLayout();
+        table_layout.setVisibility(View.INVISIBLE);
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 deleteImage(begin_image);
-                setN(difficulty);
-                createBitmaps(image);
-                createTableLayout();
 
-                TableRow tablerow = (TableRow)findViewById(R.id.tablerow_time_moves);
-                tablerow.setVisibility(View.VISIBLE);
-                text_move = (TextView)findViewById(R.id.txt_move_count);
-                text_move.setText("Moves\n" + move_count);
-
-                text_time = (TextView)findViewById(R.id.txt_time);
-                text_time.setText("Time\n00:00");
+                table_layout.setVisibility(View.VISIBLE);
 
                 setTimer();
             }
         }, sleep_time);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i("onPauze", "onPauze GameActivity");
+        if (save_state) {
+            saveState();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i("onStop", "onStop GameActivity");
+        if (save_state) {
+            saveState();
+        }
+
+        for (int i = 0; i < bitmap_array.size(); i++) {
+            bitmap_array.get(i).recycle();
+        }
+        for (int i = 0; i < imageviews_array.size(); i++) {
+            ImageView imageview = imageviews_array.get(i);
+            imageviews_array.remove(i);
+            imageview.setImageDrawable(null);
+        }
+        Log.i("Bitmaps recycled", "true");
+        bitmap_array.clear();
+        System.gc();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("onStart", "onStart");
+        System.gc();
+
+        getArray();
+        try {
+            createBitmaps(image);
+        } catch (OutOfMemoryError e) {
+            Log.i("OutOfMemoryError, trying again.", "createBitmaps(image);");
+            System.gc();
+            createBitmaps(image);
+        }
+        Log.i("tile_setup", "" + tile_setup);
+        setBitmapsInTableLayout(tile_setup);
+
+        TableRow tablerow = (TableRow)findViewById(R.id.tablerow_time_moves);
+        tablerow.setVisibility(View.VISIBLE);
+        text_move = (TextView)findViewById(R.id.txt_move_count);
+        text_move.setText(getResources().getText(R.string.moves) + "\n" + move_count);
+
+        text_time = (TextView)findViewById(R.id.txt_time);
+        text_time.setText(getResources().getText(R.string.time) +  "\n00:00");
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(GameActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        this.startActivity(intent);
+    }
+
+    private void getArray() {
+        //sharedpreferences.edit().clear().apply();
+        if (sharedpreferences.contains("preference")){
+            Log.i("sharedPreferences found", "true");
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    int imageview_id = (j + 1) * 100 + (i + 1);
+                    tile_setup.add(sharedpreferences.getInt("" + imageview_id, -1));
+                }
+            }
+        } else {
+            Log.i("No sharedPreferences found", "false");
+            makeArray();
+        }
+
+    }
+
+    public void makeArray() {
+        ArrayList<Integer> bitmaps_int_array = new ArrayList<Integer>();
+        for (int i = 0; i < Math.pow(n, 2); i++) {
+            bitmaps_int_array.add(i);
+        }
+        /*
+        // Shuffle bitmaps_array
+        Random r = new Random();
+        for (int i = 0; i < 0; i++) {
+            int random_1 = r.nextInt(bitmaps_array.size());
+            int random_2 = r.nextInt(bitmaps_array.size() - 1);
+            while (random_1 == random_2) {
+                // If the random tile is not the same
+                random_2 = r.nextInt(bitmaps_array.size() - 1);
+            }
+            int temp_value = bitmaps_array.get(random_1);
+            bitmaps_array.set(random_1, bitmaps_array.get(random_2));
+            bitmaps_array.set(random_2, temp_value);
+        }
+        */
+        for (int i = 0; i < bitmaps_int_array.size(); i++) {
+            tile_setup.add(bitmaps_int_array.get(i));
+        }
+    }
+
+    private void saveState() {
+        sharedpreferences = getSharedPreferences("prefs", Context.MODE_MULTI_PROCESS);
+        sharedpreferences.edit().clear().apply();
+        sharedpreferences.edit().putBoolean("preference", true).apply();
+        sharedpreferences.edit().putString("difficulty", difficulty).apply();
+        sharedpreferences.edit().putInt("image", image).apply();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                int imageview_id = (j + 1) * 100 + (i + 1);
+                ImageView imageview = (ImageView)findViewById(imageview_id);
+                int image_id = (Integer)imageview.getTag();
+                sharedpreferences.edit().putInt("" + imageview.getId(), image_id).apply();
+            }
+        }
+        Log.i("State Saved", "true");
     }
 
     private void setTimer() {
@@ -90,7 +230,7 @@ public class GameActivity extends Activity {
                         long time_now = System.currentTimeMillis();
                         int elapsed_time = (int)((time_now - time_start) / 1000);
                         time = parseTime(elapsed_time);
-                        text_time.setText("Time\n" + time);
+                        text_time.setText(getResources().getText(R.string.time) +  "\n" + time);
                     }
                 });
             }
@@ -118,44 +258,40 @@ public class GameActivity extends Activity {
 
     public void createBitmaps(int image_id) {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), image_id);
+        Log.i("image_id", "" + image_id);
         int tile_width = bitmap.getWidth() / n;
         int tile_height = bitmap.getHeight() / n;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++){
                 Bitmap cropped_image = Bitmap.createBitmap(bitmap, tile_width * j, tile_height * i, tile_width, tile_height);
-                String file_name = "" + ((j + 1) * 100 + (i + 1));
-                saveBitmap(cropped_image, file_name, getApplicationContext());
+                bitmap_array.add(cropped_image);
             }
         }
         bitmap.recycle();
     }
 
-    public void saveBitmap(Bitmap bitmap, String file_name, Context context) {
-        FileOutputStream output;
-        try {
-            output = context.openFileOutput(file_name, Context.MODE_PRIVATE);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, output);
-            output.close();
-        } catch (Exception e) {
-            Log.i("Failed to save bitmap:", file_name);
-            e.printStackTrace();
-        }
-    }
+    private void setBitmapsInTableLayout(ArrayList<Integer> array) {
+        // The array is in the form of {imageview_id_1, filename_1, imageview_id_2, filename_2,...}
+        Log.i("setBitmapsInTableLayout: array", "" + array);
+        int array_index = -1;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                array_index++;
+                ImageView imageview = (ImageView) findViewById((j + 1) * 100 + (i + 1));
+                // Set tag to know which bitmap was placed in the imageview
+                imageview.setTag(array.get(array_index));
+                imageview.setImageBitmap(bitmap_array.get(array.get(array_index)));
 
-    public Bitmap loadBitmap(String file_name, Context context) {
-        try{
-            FileInputStream input = context.openFileInput(file_name);
-            Bitmap bitmap = BitmapFactory.decodeStream(input);
-            input.close();
-            return bitmap;
-        } catch(Exception e){
-            Log.i("Failed to load bitmap:", file_name);
-            e.printStackTrace();
-            return null;
+                if ((Integer)imageview.getTag() == Math.pow(n,2) - 1){
+                    imageview.setAlpha((float)0.5);
+                }
+
+            }
         }
     }
 
     private void createTableLayout() {
+        // This creates the tiles, does not put in the images
         table_layout = (TableLayout)findViewById(R.id.table_layout);
         TableRow.LayoutParams lp_row = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT,(float)1);
         TableRow.LayoutParams lp_imageview = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT,(float)1);
@@ -164,94 +300,102 @@ public class GameActivity extends Activity {
             TableRow row = new TableRow(this);
             for (int j = 0; j < n; j++) {
                 ImageView imageview = new ImageView(this);
-                /* i.e. if n = 3, the imageviews will have id's according to their 'x0y' coordinates
-                top left will have id 101, bottom left id 103, bottom right id 303 etc.*/
+                // i.e. if n = 3, the imageviews will have id's according to their 'x0y' coordinates
+                // top left will have id 101, bottom left id 103, bottom right id 303 etc.
                 imageview.setId((j + 1) * 100 + (i + 1));
-                imageview.setImageBitmap(loadBitmap("" + imageview.getId(), getApplicationContext()));
-                // Set tag to know which bitmap was placed in the imageview
-                imageview.setTag("" + imageview.getId());
-                lp_imageview.setMargins(5,5,5,5);
-                if (i == (n-1) && j == (n-1)) {
-                    imageview.setAlpha((float)0);
-                }
+
+
+                lp_imageview.setMargins(5, 5, 5, 5);
+
                 imageview.setLayoutParams(lp_imageview);
                 imageview.setAdjustViewBounds(true);
                 imageview.setOnClickListener(listener);
+                imageviews_array.add(imageview);
                 row.addView(imageview);
             }
-
             row.setLayoutParams(lp_row);
             table_layout.addView(row);
         }
     }
 
     private void checkIfCompleted() {
+        int count = -1;
+
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                int id = (j + 1) * 100 + (i + 1);
-                ImageView imageview = (ImageView)findViewById(id);
-                int image_id = Integer.parseInt((String)imageview.getTag());
+                count++;
+                int imageview_id = (j + 1) * 100 + (i + 1);
+                ImageView imageview = (ImageView)findViewById(imageview_id);
+                int image_id = (Integer)imageview.getTag();
 
-                if (id != image_id) {
+
+                if (image_id != count) {
                     // The game is not won
                     return;
                 }
             }
         }
         // The game is won
-        Intent win_intent = new Intent("android.intent.action.WIN");
-        win_intent.putExtra("Image", image);
-        win_intent.putExtra("Moves", move_count);
-        win_intent.putExtra("Time", time);
+        Intent win_intent = new Intent(GameActivity.this, WinActivity.class);
+        win_intent.putExtra("image", image);
+        win_intent.putExtra("moves", move_count);
+        win_intent.putExtra("time", time);
         win_intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-
+        sharedpreferences.edit().clear().apply();
+        save_state = false;
         GameActivity.this.startActivity(win_intent);
         this.finish();
     }
 
-    private void switchViews(String image_name, int id_new_image_holder, int id_pressed_view) {
+    private void switchViews(Integer image_name, int id_new_image_holder, int id_pressed_view) {
+        Log.i("Switch views", "" + id_new_image_holder + id_pressed_view);
         ImageView imageview_picture = (ImageView)findViewById(id_new_image_holder);
-        imageview_picture.setImageBitmap(loadBitmap(image_name, getApplicationContext()));
+        ImageView imageview_pressed = (ImageView)findViewById(id_pressed_view);
+
+        imageview_picture.setImageBitmap(bitmap_array.get(image_name));
         imageview_picture.setAlpha((float)1);
         imageview_picture.setTag(image_name);
-        ImageView imageview_pressed = (ImageView)findViewById(id_pressed_view);
-        imageview_pressed.setTag("" + (n * 100 + n));
-        imageview_pressed.setAlpha((float)0);
+
+        imageview_pressed.setImageBitmap(bitmap_array.get(bitmap_array.size() - 1));
+        imageview_pressed.setTag(bitmap_array.size() - 1);
+        imageview_pressed.setAlpha((float) 0.5);
+
         move_count++;
-        text_move.setText("Moves\n" + move_count);
+        text_move.setText(getResources().getText(R.string.moves) + "\n" + move_count);
     }
 
     private void tileClick(View view) {
         if (view.getAlpha() == 1) {
             int view_id = view.getId();
             try {
-                ImageView imageview_top = (ImageView)findViewById(view_id - 1);
-                if (imageview_top.getAlpha() == 0) {
-                    switchViews((String)view.getTag(), view_id - 1, view_id);
+                ImageView imageview_top = (ImageView) findViewById(view_id - 1);
+                if (imageview_top.getAlpha() != 1) {
+                    switchViews((Integer)view.getTag(), view_id - 1, view_id);
                 }
             } catch (Exception e) {
                 // There is no imageview on the top (border)
             }
             try {
-                ImageView imageview_under = (ImageView)findViewById(view_id + 1);
-                if (imageview_under.getAlpha() == 0) {
-                    switchViews((String)view.getTag(), view_id + 1, view_id);
+                ImageView imageview_under = (ImageView) findViewById(view_id + 1);
+
+                if (imageview_under.getAlpha() != 1) {
+                    switchViews((Integer)view.getTag(), view_id + 1, view_id);
                 }
             } catch (Exception e) {
                 // There is no imageview on the bottom (border)
             }
             try {
-                ImageView imageview_left = (ImageView)findViewById(view_id - 100);
-                if (imageview_left.getAlpha() == 0) {
-                    switchViews((String)view.getTag(), view_id - 100, view_id);
+                ImageView imageview_left = (ImageView) findViewById(view_id - 100);
+                if (imageview_left.getAlpha() != 1) {
+                    switchViews((Integer)view.getTag(), view_id - 100, view_id);
                 }
             } catch (Exception e) {
                 // There is no imageview on the left (border)
             }
             try {
-                ImageView imageview_right = (ImageView)findViewById(view_id + 100);
-                if (imageview_right.getAlpha() == 0) {
-                    switchViews((String)view.getTag(), view_id + 100, view_id);
+                ImageView imageview_right = (ImageView) findViewById(view_id + 100);
+                if (imageview_right.getAlpha() != 1) {
+                    switchViews((Integer)view.getTag(), view_id + 100, view_id);
                 }
             } catch (Exception e) {
                 // There is no imageview on the right (border)
@@ -309,15 +453,20 @@ public class GameActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.menu_change_difficulty:
-                Intent change_diff_intent = new Intent("android.intent.action.DIFFICULTY");
+                Intent change_diff_intent = new Intent(GameActivity.this, ChangeDifficultyActivity.class);
                 change_diff_intent.putExtra("difficulty", difficulty);
-                change_diff_intent.putExtra("Image", image);
+                change_diff_intent.putExtra("image", image);
                 GameActivity.this.startActivity(change_diff_intent);
                 return true;
             case R.id.menu_solution:
-                Intent see_solution = new Intent("android.intent.action.SOLUTION");
-                see_solution.putExtra("Image", image);
+                Intent see_solution = new Intent(GameActivity.this, SolutionActivity.class);
+                see_solution.putExtra("image", image);
                 GameActivity.this.startActivity(see_solution);
+                return true;
+            case R.id.quit:
+                Intent quit_to_main = new Intent(GameActivity.this, MainActivity.class);
+                quit_to_main.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                GameActivity.this.startActivity(quit_to_main);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

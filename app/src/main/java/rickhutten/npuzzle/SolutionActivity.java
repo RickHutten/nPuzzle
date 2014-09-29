@@ -13,7 +13,7 @@ public class SolutionActivity extends Activity {
         setContentView(R.layout.activity_solution);
 
         Bundle extras = getIntent().getExtras();
-        int image = extras.getInt("Image");
+        int image = extras.getInt("image");
 
         ImageView image_view = (ImageView)findViewById(R.id.solution_view);
         image_view.setImageResource(image);

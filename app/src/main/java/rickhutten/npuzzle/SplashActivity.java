@@ -25,7 +25,7 @@ public class SplashActivity extends Activity {
             @Override
             public void run() {
                 // Make intent that will start MainActivity
-                Intent main_intent = new Intent("android.intent.action.SETTING");
+                Intent main_intent = new Intent(SplashActivity.this, MainActivity.class);
                 SplashActivity.this.startActivity(main_intent);
                 SplashActivity.this.finish();
             }

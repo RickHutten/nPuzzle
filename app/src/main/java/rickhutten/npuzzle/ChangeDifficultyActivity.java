@@ -16,7 +16,6 @@ public class ChangeDifficultyActivity extends Activity {
 
     TextView textview;
     SeekBar seekbar;
-    Intent intent = new Intent("android.intent.action.GAME");
     String difficulty;
     String orig_difficulty;
     int orig_difficulty_int;
@@ -72,7 +71,7 @@ public class ChangeDifficultyActivity extends Activity {
 
         Bundle extras = getIntent().getExtras();
         orig_difficulty = extras.getString("difficulty");
-        image = extras.getInt("Image");
+        image = extras.getInt("image");
 
         seekbar = (SeekBar)findViewById(R.id.seekbar2);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)seekbar.getLayoutParams();
@@ -113,8 +112,8 @@ public class ChangeDifficultyActivity extends Activity {
                         difficulty = "Hard";
                         break;
                 }
+                Intent intent = new Intent(ChangeDifficultyActivity.this, GameActivity.class);
                 intent.putExtra("Difficulty", difficulty);
-
                 intent.putExtra("Image", image);
 
                 /* Close the previous activity if starting a new game with
