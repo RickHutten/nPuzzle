@@ -38,6 +38,6 @@ API's and frameworks
 
 Mockup
 ---
-![](Mockup.PNG)
+![](Mockup.png)
 
 

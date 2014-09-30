@@ -24,7 +24,7 @@ import java.util.TimerTask;
 
 public class GameActivity extends Activity {
 
-    private static final int shuffle_amount = 0;
+    private static final int shuffle_amount = 20;
 
 	int sleep_time = 2000;
 	int image;
@@ -275,17 +275,20 @@ public class GameActivity extends Activity {
 
 	public void createBitmaps(int image_id) {
 		Bitmap bitmap = BitmapFactory.decodeResource(getResources(), image_id);
+        // Change bitmap configuration from ARGB_888 to RGB_565 to decrease bitmap size
+        Bitmap bitmap_smaller = bitmap.copy(Bitmap.Config.RGB_565, true);
+        bitmap.recycle();
 
-		int tile_width = bitmap.getWidth() / n;
-		int tile_height = bitmap.getHeight() / n;
+		int tile_width = bitmap_smaller.getWidth() / n;
+		int tile_height = bitmap_smaller.getHeight() / n;
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < n; j++){
 				Bitmap cropped_image = Bitmap.createBitmap(
-                        bitmap, tile_width * j, tile_height * i, tile_width, tile_height);
+                        bitmap_smaller, tile_width * j, tile_height * i, tile_width, tile_height);
 				bitmap_array.add(cropped_image);
 			}
 		}
-		bitmap.recycle();
+		bitmap_smaller.recycle();
 	}
 
 	private void setBitmapsInTableLayout(ArrayList<Integer> array) {
