@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,14 +28,21 @@ public class WinActivity extends Activity {
         int move_count = extras.getInt("moves");
         String time = extras.getString("time");
 
-        ImageView image_view = (ImageView)findViewById(R.id.image_whole);
+        ImageView image_view = (ImageView) findViewById(R.id.image_whole);
         image_view.setImageResource(image);
 
-        TextView text_move = (TextView)findViewById(R.id.txt_move_count);
+        TextView text_move = (TextView) findViewById(R.id.txt_move_count);
         text_move.setText(getResources().getText(R.string.moves) + "\n" + move_count);
 
-        TextView text_time = (TextView)findViewById(R.id.txt_time);
-        text_time.setText(getResources().getText(R.string.time) +  "\n" + time);
+        TextView text_time = (TextView) findViewById(R.id.txt_time);
+        text_time.setText(getResources().getText(R.string.time) + "\n" + time);
 
+        TextView text_play_again = (TextView) findViewById(R.id.play_again);
+        text_play_again.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
     }
 }

@@ -18,6 +18,11 @@ import android.widget.SeekBar;
 
 public class MainActivity extends Activity {
 
+    private static final int difficulty_easy = 0;
+    private static final int difficulty_normal = 49;
+    private static final int difficulty_hard = 99;
+
+    String difficulty;
     Button button_start;
     Button button_continue;
     SeekBar seekbar;
@@ -26,11 +31,7 @@ public class MainActivity extends Activity {
     ImageView img_ice;
     ImageView img_cupcake;
     ImageView img_manhattan;
-    String difficulty;
     SharedPreferences sharedpreferences;
-    private static final int difficulty_easy = 0;
-    private static final int difficulty_normal = 49;
-    private static final int difficulty_hard = 99;
 
     View.OnClickListener c = new View.OnClickListener() {
         @Override
@@ -104,7 +105,8 @@ public class MainActivity extends Activity {
         });
 
         seekbar = (SeekBar) findViewById(R.id.seekbar);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) seekbar.getLayoutParams();
+        RelativeLayout.LayoutParams params =
+                (RelativeLayout.LayoutParams) seekbar.getLayoutParams();
         seekbar.setProgress(difficulty_normal);
 
         // Textview of difficulty
@@ -185,7 +187,7 @@ public class MainActivity extends Activity {
                 images[i].setAlpha((float) 1);
                 images[i].setSelected(true);
             } else {
-                images[i].setAlpha((float) 0.5);
+                images[i].setAlpha((float) 0.2);
                 images[i].setSelected(false);
             }
         }

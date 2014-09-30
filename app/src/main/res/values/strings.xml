@@ -3,12 +3,10 @@
 
     <string name="app_name">nPuzzle10189939</string>
     <string name="app_name_no_number">nPuzzle</string>
-    <string name="hello_world">Hello world!</string>
     <string name="button_start">Start new game</string>
     <string name="button_continue">Continue game</string>
     <string name="selectImg">Select image</string>
     <string name="difficulty">Difficulty</string>
-    <string name="game">Game Activity</string>
     <string name="Easy">Easy</string>
     <string name="Normal">Normal</string>
     <string name="Hard">Hard</string>
@@ -17,5 +15,6 @@
     <string name="time">Time</string>
     <string name="moves">Moves</string>
     <string name="quit">Quit</string>
+    <string name="play_again">Play again</string>
 
 </resources>

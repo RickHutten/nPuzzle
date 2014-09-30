@@ -16,33 +16,57 @@
         android:paddingTop="50dp"
         android:contentDescription="@null"/>
 
-    <TableRow
+    <TableLayout
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/image_whole"
-        android:layout_marginTop="25dp"
-        android:layout_centerHorizontal="true"
-        android:gravity="center_horizontal">
+        android:layout_centerHorizontal="true" >
 
-        <TextView
-            android:layout_width="100dp"
+        <TableRow
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:id="@+id/txt_time"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/round_corners" />
+            android:layout_marginTop="25dp"
+            android:gravity="center_horizontal">
 
-        <TextView
-            android:layout_width="100dp"
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:id="@+id/txt_time"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/round_corners" />
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:id="@+id/txt_move_count"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/round_corners" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
             android:layout_height="50dp"
-            android:id="@+id/txt_move_count"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:layout_marginLeft="20dp"
-            android:background="@drawable/round_corners" />
+            android:layout_marginTop="10dp">
 
-    </TableRow>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="@string/play_again"
+                android:id="@+id/play_again"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:background="@drawable/round_corners" />
+
+        </TableRow>
+
+    </TableLayout>
 
 
 </RelativeLayout>
