@@ -14,6 +14,10 @@ import android.widget.TextView;
 
 public class ChangeDifficultyActivity extends Activity {
 
+    private static final int difficulty_easy = 0;
+    private static final int difficulty_normal = 49;
+    private static final int difficulty_hard = 99;
+
     TextView textview;
     SeekBar seekbar;
     String difficulty;
@@ -26,13 +30,14 @@ public class ChangeDifficultyActivity extends Activity {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (0 <= progress && progress < 24) {
-                setDifficultyText(0);
+                setDifficultyText(difficulty_easy);
             } else if (24 <= progress && progress < 74) {
-                setDifficultyText(49);
+                setDifficultyText(difficulty_normal);
             } else if (74 <= progress && progress <= 99) {
-                setDifficultyText(99);
+                setDifficultyText(difficulty_hard);
             }
         }
+
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) { }
 
@@ -41,21 +46,21 @@ public class ChangeDifficultyActivity extends Activity {
             int progress = seekBar.getProgress();
             if (0 <= progress && progress < 25) {
                 seekBar.setProgress(0);
-                if (orig_difficulty.equals("Easy")) {
+                if (orig_difficulty.equals("easy")) {
                     button_change_difficulty.setEnabled(false);
                 } else {
                     button_change_difficulty.setEnabled(true);
                 }
             } else if (25 <= progress && progress < 75) {
                 seekBar.setProgress(49);
-                if (orig_difficulty.equals("Normal")) {
+                if (orig_difficulty.equals("normal")) {
                     button_change_difficulty.setEnabled(false);
                 } else {
                     button_change_difficulty.setEnabled(true);
                 }
             } else if (75 <= progress && progress < 100) {
                 seekBar.setProgress(99);
-                if (orig_difficulty.equals("Hard")) {
+                if (orig_difficulty.equals("hard")) {
                     button_change_difficulty.setEnabled(false);
                 } else {
                     button_change_difficulty.setEnabled(true);
@@ -69,20 +74,22 @@ public class ChangeDifficultyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_difficulty);
 
+
+
         Bundle extras = getIntent().getExtras();
         orig_difficulty = extras.getString("difficulty");
         image = extras.getInt("image");
 
-        seekbar = (SeekBar)findViewById(R.id.seekbar2);
+        seekbar = (SeekBar)findViewById(R.id.seekbar);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)seekbar.getLayoutParams();
 
-        textview = (TextView)findViewById(R.id.setDifficulty2);
-        if (orig_difficulty.equals("Easy")) {
-            orig_difficulty_int = 0;
-        } else if (orig_difficulty.equals("Normal")) {
-            orig_difficulty_int = 49;
-        } else if (orig_difficulty.equals("Hard")) {
-            orig_difficulty_int = 99;
+        textview = (TextView)findViewById(R.id.set_difficulty);
+        if (orig_difficulty.equals("easy")) {
+            orig_difficulty_int = difficulty_easy;
+        } else if (orig_difficulty.equals("normal")) {
+            orig_difficulty_int = difficulty_normal;
+        } else if (orig_difficulty.equals("hard")) {
+            orig_difficulty_int = difficulty_hard;
         }
         seekbar.setProgress(orig_difficulty_int);
         setDifficultyText(orig_difficulty_int);
@@ -103,24 +110,26 @@ public class ChangeDifficultyActivity extends Activity {
             public void onClick(View view) {
                 switch (seekbar.getProgress()) {
                     case 0:
-                        difficulty = "Easy";
+                        difficulty = "easy";
                         break;
                     case 49:
-                        difficulty = "Normal";
+                        difficulty = "normal";
                         break;
                     case 99:
-                        difficulty = "Hard";
+                        difficulty = "hard";
                         break;
                 }
                 Intent intent = new Intent(ChangeDifficultyActivity.this, GameActivity.class);
-                intent.putExtra("Difficulty", difficulty);
-                intent.putExtra("Image", image);
+                intent.putExtra("difficulty", difficulty);
+                intent.putExtra("image", image);
 
                 /* Close the previous activity if starting a new game with
                 a different difficulty. */
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
                 ChangeDifficultyActivity.this.startActivity(intent);
+                overridePendingTransition(R.anim.fade_in_scale, 0);
+
                 ChangeDifficultyActivity.this.finish();
             }
         });
@@ -130,15 +139,14 @@ public class ChangeDifficultyActivity extends Activity {
         switch (progress)
         {
             case 0:
-                textview.setText(R.string.Easy);
+                textview.setText(R.string.easy);
                 break;
             case 49:
-                textview.setText(R.string.Normal);
+                textview.setText(R.string.normal);
                 break;
             case 99:
-                textview.setText(R.string.Hard);
+                textview.setText(R.string.hard);
                 break;
         }
     }
-
 }

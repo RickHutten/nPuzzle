@@ -3,14 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="rickhutten.npuzzle.SplashActivity"
-    android:clickable="false"
     android:background="#00ffffff">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/imgSplash"
+        android:id="@+id/img_splash"
         android:contentDescription="@null" />
-
 
 </RelativeLayout>

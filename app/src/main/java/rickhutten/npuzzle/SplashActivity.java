@@ -17,18 +17,21 @@ public class SplashActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        ImageView splash_view = (ImageView)findViewById(R.id.imgSplash);
-        splash_view.setImageResource(R.drawable.splash2);
+        ImageView splash_view = (ImageView)findViewById(R.id.img_splash);
+        splash_view.setImageResource(R.drawable.splash);
 
-        // Handler to start the MainActivity after splash_time time
-        new Handler().postDelayed(new Runnable(){
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 // Make intent that will start MainActivity
                 Intent main_intent = new Intent(SplashActivity.this, MainActivity.class);
                 SplashActivity.this.startActivity(main_intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 SplashActivity.this.finish();
             }
         }, splash_time);
     }
+
+    @Override
+    public void onBackPressed() {}
 }

@@ -7,14 +7,13 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:id="@+id/RelativeLayout"
     tools:context=".MainActivity" >
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/selectImg"
-        android:id="@+id/selectImg"
+        android:text="@string/select_img"
+        android:id="@+id/select_img"
         android:textSize="20sp"
         android:paddingBottom="10dp"
         android:layout_alignParentTop="true"
@@ -22,13 +21,13 @@
 
     <TableLayout
         android:layout_width="fill_parent"
-        android:layout_below="@+id/selectImg"
+        android:layout_below="@+id/select_img"
         android:layout_above="@+id/difficulty"
         android:layout_height="wrap_content" >
 
         <TableRow
             android:layout_weight="0.5"
-            android:paddingBottom="20dp" >
+            android:paddingBottom="10dp" >
 
             <ImageView
                 android:src="@drawable/square_flower_small"
@@ -36,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:layout_marginRight="10dp"
-                android:id="@+id/imgFlower"
+                android:id="@+id/img_flower"
                 android:contentDescription="@null" />
 
             <ImageView
@@ -44,7 +43,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:id="@+id/imgIce"
+                android:id="@+id/img_ice"
                 android:contentDescription="@null" />
 
         </TableRow>
@@ -58,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
                 android:layout_marginRight="10dp"
-                android:id="@+id/imgCupcake"
+                android:id="@+id/img_cupcake"
                 android:contentDescription="@null" />
 
             <ImageView
@@ -66,10 +65,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:id="@+id/imgManhattan"
+                android:id="@+id/img_manhattan"
                 android:contentDescription="@null" />
+
         </TableRow>
-        </TableLayout>
+
+    </TableLayout>
 
     <TextView
         android:layout_width="wrap_content"
@@ -85,7 +86,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/seekbar"
         android:max="99"
-        android:layout_above="@+id/setDifficulty"
+        android:layout_above="@+id/set_difficulty"
         android:layout_centerHorizontal="true" />
 
     <TextView
@@ -93,7 +94,7 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:layout_above="@+id/button_holder"
-        android:id="@+id/setDifficulty"
+        android:id="@+id/set_difficulty"
         android:paddingBottom="20dp"
         android:layout_centerHorizontal="true" />
 
@@ -119,7 +120,5 @@
             android:enabled="false" />
 
     </TableRow>
-
-
 
 </RelativeLayout>

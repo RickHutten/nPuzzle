@@ -9,6 +9,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -77,10 +79,10 @@ public class MainActivity extends Activity {
         System.gc();
 
         // Declare images and set OnClickListener
-        img_flower = (ImageView) findViewById(R.id.imgFlower);
-        img_ice = (ImageView) findViewById(R.id.imgIce);
-        img_cupcake = (ImageView) findViewById(R.id.imgCupcake);
-        img_manhattan = (ImageView) findViewById(R.id.imgManhattan);
+        img_flower = (ImageView) findViewById(R.id.img_flower);
+        img_ice = (ImageView) findViewById(R.id.img_ice);
+        img_cupcake = (ImageView) findViewById(R.id.img_cupcake);
+        img_manhattan = (ImageView) findViewById(R.id.img_manhattan);
 
         img_flower.setOnClickListener(c);
         img_ice.setOnClickListener(c);
@@ -110,7 +112,7 @@ public class MainActivity extends Activity {
         seekbar.setProgress(difficulty_normal);
 
         // Textview of difficulty
-        textview = (TextView) (findViewById(R.id.setDifficulty));
+        textview = (TextView) (findViewById(R.id.set_difficulty));
         setDifficultyText(difficulty_normal);
 
         seekbar.setOnSeekBarChangeListener(l);
@@ -141,53 +143,95 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this, GameActivity.class);
         difficulty = sharedpreferences.getString("difficulty", "");
         int image = sharedpreferences.getInt("image", -1);
-        intent.putExtra("Difficulty", difficulty);
-        intent.putExtra("Image", image);
+        intent.putExtra("difficulty", difficulty);
+        intent.putExtra("image", image);
         intent.putExtra("preferences", true);
 
         startActivity(intent);
+        this.overridePendingTransition(R.anim.slide_in_right , R.anim.slide_out_left );
     }
 
     // Go to game activity
     private void buttonStartClick() {
         switch (seekbar.getProgress()) {
             case difficulty_easy:
-                difficulty = "Easy";
+                difficulty = "easy";
                 break;
             case difficulty_normal:
-                difficulty = "Normal";
+                difficulty = "normal";
                 break;
             case difficulty_hard:
-                difficulty = "Hard";
+                difficulty = "hard";
                 break;
         }
         Intent intent = new Intent(MainActivity.this, GameActivity.class);
-        intent.putExtra("Difficulty", difficulty);
+        intent.putExtra("difficulty", difficulty);
         intent.putExtra("preferences", false);
         if (img_flower.isSelected()) {
-            intent.putExtra("Image", R.drawable.square_flower);
+            intent.putExtra("image", R.drawable.square_flower);
         } else if (img_ice.isSelected()) {
-            intent.putExtra("Image", R.drawable.square_ice);
+            intent.putExtra("image", R.drawable.square_ice);
         } else if (img_cupcake.isSelected()) {
-            intent.putExtra("Image", R.drawable.square_cupcake);
+            intent.putExtra("image", R.drawable.square_cupcake);
         } else if (img_manhattan.isSelected()) {
-            intent.putExtra("Image", R.drawable.square_manhattan);
+            intent.putExtra("image", R.drawable.square_manhattan);
         }
         startActivity(intent);
+        this.overridePendingTransition(R.anim.slide_in_right , R.anim.slide_out_left );
     }
 
     private void selectImage(View view) {
 
         button_start.setEnabled(true);
-        ImageView[] images = {img_flower, img_ice, img_cupcake, img_manhattan};
+        final ImageView[] images = {img_flower, img_ice, img_cupcake, img_manhattan};
         int id_pressed = view.getId();
 
         for (int i = 0; i < images.length; i++) {
+            final int j = i;
             if (images[i].getId() == id_pressed) {
-                images[i].setAlpha((float) 1);
+                if (images[i].getAlpha() != 1) {
+                    Animation anim = AnimationUtils.loadAnimation(getApplicationContext(),
+                            R.anim.fade_in_partially);
+                    anim.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                            // The animation wont wrok properly if not set to 1
+                            images[j].setAlpha((float) 1);
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            images[j].setAlpha((float) 1);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+                        }
+                    });
+                    images[i].startAnimation(anim);
+                }
                 images[i].setSelected(true);
             } else {
-                images[i].setAlpha((float) 0.2);
+                if (images[i].getAlpha() == 1.0) {
+                    Animation anim = AnimationUtils.loadAnimation(getApplicationContext(),
+                            R.anim.fade_out_partially);
+                    anim.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            // Probably a bug, but this seems to work
+                            images[j].setAlpha((float) 0.99);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+                        }
+                    });
+                    images[i].startAnimation(anim);
+                }
                 images[i].setSelected(false);
             }
         }
@@ -197,16 +241,20 @@ public class MainActivity extends Activity {
         switch (progress)
         {
             case difficulty_easy:
-                textview.setText(R.string.Easy);
+                textview.setText(R.string.easy);
                 break;
             case difficulty_normal:
-                textview.setText(R.string.Normal);
+                textview.setText(R.string.normal);
                 break;
             case difficulty_hard:
-                textview.setText(R.string.Hard);
+                textview.setText(R.string.hard);
                 break;
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        this.finish();
+        this.overridePendingTransition(R.anim.slide_in_left , R.anim.slide_out_right );
+    }
 }
-
